@@ -44,5 +44,12 @@ app.get("/", (req, res) => {
 const notFound = require("./middlewares/notFound");
 app.use(notFound);
 
+const responseTime = require("./middlewares/responseTime");
+app.use(responseTime);
+
+const errorHandler = require("./middlewares/errorHandler");
+app.use(errorHandler); // Sempre por último!
+
+
 
 module.exports = app;
