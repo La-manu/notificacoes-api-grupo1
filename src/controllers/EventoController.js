@@ -1,5 +1,4 @@
 const EventoModel = require("../models/EventoModel");
-const { NotFoundError, ValidationError } = require("../errors/AppError");
 function index(req, res, next) {
   try {
     const eventos = EventoModel.listarTodos();
@@ -8,6 +7,17 @@ function index(req, res, next) {
     next(erro);
   }
 }
+
+const {
+  isRequired,
+  isPositiveInteger,
+  minLength,
+  validar,
+} = require("../helpers/validators");
+const { NotFoundError, ValidationError } = require("../errors/AppError");
+
+
+
 function show(req, res, next) {
   try {
     const id = parseInt(req.params.id);
@@ -20,37 +30,65 @@ function show(req, res, next) {
     next(erro);
   }
 }
+
+// NOVO STORE
 function store(req, res, next) {
   try {
     const { nome, descricao, data, local, capacidade } = req.body;
-    if (!nome || !data) {
-      throw new ValidationError("Nome e data são obrigatórios");
+    // Validar os dados de entrada
+    const erros = validar([
+      isRequired(nome, "Nome"),
+      isRequired(data, "Data"),
+      minLength(nome, 3, "Nome"),
+      isPositiveInteger(capacidade, "Capacidade"),
+    ]);
+
+    if (erros) {
+      throw new ValidationError(erros.join("; "));
     }
+
     const novoEvento = EventoModel.criar({
       nome,
       descricao,
       data,
       local,
-
       capacidade,
     });
+    
     res.status(201).json(novoEvento);
   } catch (erro) {
     next(erro);
   }
 }
+
+// NOVO UPDATE
 function update(req, res, next) {
   try {
     const id = parseInt(req.params.id);
+    const { nome, capacidade } = req.body;
+    
+    // No update, os campos não são obrigatórios (atualização parcial)
+    // Mas SE forem enviados, devem ser válidos
+    const erros = validar([
+      minLength(nome, 3, "Nome"),
+      isPositiveInteger(capacidade, "Capacidade"),
+    ]);
+
+    if (erros.length > 0) {
+      throw new ValidationError(erros.join("; "));
+    }
+    
     const eventoAtualizado = EventoModel.atualizar(id, req.body);
     if (!eventoAtualizado) {
       throw new NotFoundError("Evento");
     }
+
     res.json(eventoAtualizado);
   } catch (erro) {
     next(erro);
   }
 }
+
 function destroy(req, res, next) {
   try {
     const id = parseInt(req.params.id);
@@ -63,4 +101,5 @@ function destroy(req, res, next) {
     next(erro);
   }
 }
+
 module.exports = { index, show, store, update, destroy };

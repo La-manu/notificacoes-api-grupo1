@@ -23,19 +23,17 @@ function show(req, res, next) {
   }
 }
 
+// NOVO STORE
 function store(req, res, next) {
   try {
     const { nome, email } = req.body;
-
-    if (!nome || !email) {
-      return res.status(400).json({ error: "Nome e email são obrigatórios." });
+    const erros = validar([
+      isRequired(nome, "Nome"),
+      isRequired(email, "Email"),
+    ]);
+    if (erros) {
+      throw new ValidationError(erros.join("; "));
     }
-   
-    if (email && !email.includes("@")) {
-      return res.status(400).json({ error: "O email fornecido é inválido." });
-      
-    }
-
     const novoParticipante = ParticipanteModel.criar({ nome, email });
     res.status(201).json(novoParticipante);
   } catch (erro) {
@@ -43,20 +41,37 @@ function store(req, res, next) {
   }
 }
 
-function update(req, res, next) {
 
+// UPDATE COM VALIDAÇÃO
+function update(req, res, next) {
   try {
     const id = parseInt(req.params.id);
+    const erros = [];
+
+    if (!req.body.nome) {
+      erros.push("Nome obrigatorio");
+    }
+
+    if (!req.body.email) {
+      erros.push("Email obrigatorio");
+    }
+
+    if (!req.body.eventoId) {
+      erros.push("EventoId obrigatorio");
+    }
+
+    if (erros.length > 0) {
+      throw new BadRequestError(erros.join("; "));
+    }
     const ParticipanteAtualizado = ParticipanteModel.atualizar(id, req.body);
     if (!ParticipanteAtualizado) {
       throw new NotFoundError("Participante");
     }
     res.json(ParticipanteAtualizado);
-    } catch (erro) {    next(erro);
-  
+  } catch (erro) {
+    next(erro);
   }
 }
-
 
 function destroy(req, res, next) {
   try {
@@ -70,6 +85,5 @@ function destroy(req, res, next) {
     next(erro);
   }
 }
-
 
 module.exports = { index, show, store, update, destroy };

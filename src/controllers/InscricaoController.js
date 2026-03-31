@@ -4,23 +4,26 @@ const EventoModel = require("../models/EventoModel");
 const ParticipanteModel = require("../models/ParticipanteModel");
 const { NotFoundError, ValidationError } = require("../errors/AppError");
 
-// POST /inscricoes — criar uma inscrição
+// Novo store - DESAFIO VALIDAR INCRIÇÕES
 function store(req, res, next) {
   try {
     const { eventoId, participanteId } = req.body;
+    const erros = validar([
+      isRequired(eventoId, "EventoID"),
+      isRequired(participanteId, "ParticipanteID"),
+    ]);
 
-    if (!eventoId || !participanteId) {
-      throw new ValidationError("eventoId e participanteId são obrigatórios");
+    if (erros) {
+      throw new ValidationError(erros.join("; "));
     }
-
     const resultado = InscricaoModel.criar(
       parseInt(eventoId),
-      parseInt(participanteId)
+      parseInt(participanteId),
     );
 
-    return res.status(201).json(resultado);
-  } catch (error) {
-    next(error);
+    res.status(201).json(resultado);
+  } catch (erro) {
+    next(erro);
   }
 }
 
@@ -77,7 +80,7 @@ function detalhes(req, res, next) {
 
     const evento = EventoModel.buscarPorId(inscricao.eventoId);
     const participante = ParticipanteModel.buscarPorId(
-      inscricao.participanteId
+      inscricao.participanteId,
     );
 
     return res.json({

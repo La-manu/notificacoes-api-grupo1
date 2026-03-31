@@ -3,6 +3,7 @@ const EventoModel = require("./EventoModel");
 const ParticipanteModel = require("./ParticipanteModel");
 let inscricoes = [];
 let proximoId = 1;
+
 // Criar uma nova inscrição
 function criar(eventoId, participanteId) {
   // Verificar se o evento existe
@@ -27,14 +28,17 @@ function criar(eventoId, participanteId) {
   inscricoes.push(novaInscricao);
   return novaInscricao;
 }
+
 // Listar inscrições de um evento específico
 function listarPorEvento(eventoId) {
   return inscricoes.filter((i) => i.eventoId === eventoId);
 }
+
 // Listar todas as inscrições
 function listarTodas() {
   return inscricoes;
 }
+
 // Cancelar uma inscrição
 function cancelar(id) {
   const index = inscricoes.findIndex((i) => i.id === id);
@@ -46,6 +50,7 @@ function cancelar(id) {
 function buscarPorId(id) {
   return inscricoes.find((i) => i.id === id);
 }
+
 module.exports = {
   criar,
   listarPorEvento,
