@@ -4,24 +4,14 @@ const EventoModel = require("../models/EventoModel");
 const ParticipanteModel = require("../models/ParticipanteModel");
 const { NotFoundError, ValidationError } = require("../errors/AppError");
 
+const InscricaoService = require("../services/InscricaoService");
+
 // Novo store - DESAFIO VALIDAR INCRIÇÕES
+// POST /inscricoes
 function store(req, res, next) {
   try {
-    const { eventoId, participanteId } = req.body;
-    const erros = validar([
-      isRequired(eventoId, "EventoID"),
-      isRequired(participanteId, "ParticipanteID"),
-    ]);
-
-    if (erros) {
-      throw new ValidationError(erros.join("; "));
-    }
-    const resultado = InscricaoModel.criar(
-      parseInt(eventoId),
-      parseInt(participanteId),
-    );
-
-    res.status(201).json(resultado);
+    const novoInscricao = InscricaoService.criar(req.body);
+    res.status(201).json(novoInscricao);
   } catch (erro) {
     next(erro);
   }
@@ -30,10 +20,10 @@ function store(req, res, next) {
 // GET /inscricoes — listar todas
 function index(req, res, next) {
   try {
-    const inscricoes = InscricaoModel.listarTodas();
+    const inscricoes = InscricaoService.listarTodas();
     res.json(inscricoes);
-  } catch (error) {
-    next(error);
+  } catch (erro) {
+    next(erro);
   }
 }
 
@@ -42,11 +32,11 @@ function listarPorEvento(req, res, next) {
   try {
     const eventoId = parseInt(req.params.eventoId);
 
-    const inscricoes = InscricaoModel.listarPorEvento(eventoId);
+    const inscricoes = InscricaoService.listarPorEvento(eventoId);
 
-    return res.json(inscricoes);
-  } catch (error) {
-    next(error);
+    res.json(inscricoes);
+  } catch (erro) {
+    next(erro);
   }
 }
 
@@ -55,11 +45,7 @@ function cancelar(req, res, next) {
   try {
     const id = parseInt(req.params.id);
 
-    const inscricao = InscricaoModel.cancelar(id);
-
-    if (!inscricao) {
-      throw new NotFoundError("Inscrição");
-    }
+    const inscricao = InscricaoService.cancelar(id);
 
     return res.json(inscricao);
   } catch (error) {
@@ -70,39 +56,13 @@ function cancelar(req, res, next) {
 // GET /inscricoes/:id/detalhes
 function detalhes(req, res, next) {
   try {
-    const id = parseInt(req.params.id);
-
-    const inscricao = InscricaoModel.buscarPorId(id);
-
-    if (!inscricao) {
-      throw new NotFoundError("Inscrição");
-    }
-
-    const evento = EventoModel.buscarPorId(inscricao.eventoId);
-    const participante = ParticipanteModel.buscarPorId(
-      inscricao.participanteId,
-    );
-
-    return res.json({
-      id: inscricao.id,
-      status: inscricao.status,
-      dataInscricao: inscricao.dataInscricao,
-      evento: evento
-        ? {
-            id: evento.id,
-            nome: evento.nome,
-          }
-        : null,
-      participante: participante
-        ? {
-            id: participante.id,
-            nome: participante.nome,
-            email: participante.email,
-          }
-        : null,
-    });
-  } catch (error) {
-    next(error);
+    const { id } = req.params;
+    // Idealmente, essa lógica complexa de montar o objeto com evento e participante
+    // também deveria ser movida para um método no Service futuramente.
+    const detalhes = InscricaoService.buscarDetalhes(id);
+    res.json(detalhes);
+  } catch (erro) {
+    next(erro);
   }
 }
 

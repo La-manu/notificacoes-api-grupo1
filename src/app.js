@@ -1,35 +1,42 @@
 // src/app.js
 const express = require("express");
 const app = express();
-
-// Middleware para ler JSON no body
-app.use(express.json());
-
-// No topo, junto com os outros requires:
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger");
-// Depois do app.use(express.json()):
+const logger = require("./middlewares/logger");
+const cors = require("cors");
+const responseTime = require("./middlewares/responseTime");
+
+
+// ============================================
+// MIDDLEWARES GLOBAIS
+// ============================================
+app.use(express.json());
+app.use(logger);
+app.use(cors());
+app.use(responseTime);
+
+
+// ============================================
+// DOCUMENTAÇÃO
+// ============================================
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-const logger = require("./middlewares/logger");
-app.use(logger);
-
-const cors = require("cors");
-app.use(cors());
-// Importar rotas
+// ============================================
+// ROTAS
+// ============================================
 const eventoRoutes = require("./routes/eventoRoutes");
 const participanteRoutes = require("./routes/participanteRoutes");
 const inscricaoRoutes = require("./routes/inscricaoRoutes");
-
-// Usar rotas com prefixo
 app.use("/eventos", eventoRoutes);
 app.use("/participantes", participanteRoutes);
 app.use("/inscricoes", inscricaoRoutes);
-
-// Rota raiz
+// Rota raiz (informativa)
 app.get("/", (req, res) => {
   res.json({
     mensagem: "API de Notificações",
+    versao: "1.0.0",
+    documentacao: "/api-docs",
     rotas: {
       eventos: "/eventos",
       participantes: "/participantes",
@@ -38,18 +45,13 @@ app.get("/", (req, res) => {
   });
 });
 
-
-// ... todas as rotas acima ...
-// Middleware de rota não encontrada (sempre por último!)
+// ============================================
+// MIDDLEWARES DE ERRO (sempre por último!)
+// ============================================
 const notFound = require("./middlewares/notFound");
 app.use(notFound);
 
-const responseTime = require("./middlewares/responseTime");
-app.use(responseTime);
-
 const errorHandler = require("./middlewares/errorHandler");
-app.use(errorHandler); // Sempre por último!
-
-
+app.use(errorHandler);
 
 module.exports = app;

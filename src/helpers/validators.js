@@ -15,7 +15,8 @@ function isRequired(valor, nomeCampo) {
  * Verifica se é um e-mail válido (validação simples)
  */
 function isEmail(valor) {
-  if (!valor) return null; // Se não foi enviado, não valida (use isRequired para isso)
+  if (!valor) return null; // Se não foi 
+  // enviado, não valida (use isRequired para isso)
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!regex.test(valor)) {
     return "E-mail inválido";
