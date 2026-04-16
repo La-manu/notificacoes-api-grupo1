@@ -20,6 +20,23 @@ const Inscricao = sequelize.define(
       allowNull: false,
       defaultValue: "confirmada",
     },
+    evento_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "eventos",
+        key: "id",
+      },
+    },
+
+    participante_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "participantes",
+        key: "id",
+      },
+    },
   },
   {
     tableName: "inscricoes",
