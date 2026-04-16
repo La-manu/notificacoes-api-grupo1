@@ -1,7 +1,7 @@
 // src/controllers/InscricaoController.js
-const InscricaoModel = require("../models/InscricaoModel");
-const EventoModel = require("../models/EventoModel");
-const ParticipanteModel = require("../models/ParticipanteModel");
+const InscricaoModel = require("../models-antigos/InscricaoModel");
+const EventoModel = require("../models-antigos/EventoModel");
+const ParticipanteModel = require("../models-antigos/ParticipanteModel");
 const { NotFoundError, ValidationError } = require("../errors/AppError");
 
 const InscricaoService = require("../services/InscricaoService");

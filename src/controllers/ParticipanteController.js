@@ -1,5 +1,5 @@
 // src/controllers/ParticipanteController.js
-const ParticipanteModel = require("../models/ParticipanteModel");
+const ParticipanteModel = require("../models-antigos/ParticipanteModel");
 const { NotFoundError, ValidationError } = require("../errors/AppError");
 function index(req, res, next) {
   try {

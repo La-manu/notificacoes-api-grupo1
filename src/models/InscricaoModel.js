@@ -1,21 +1,30 @@
-// InscricaoModel.criar() simplificado:
-function criar(eventoId, participanteId) {
-  // Verificar duplicata (essa fica no Model porque é regra de dados)
-  const jaInscrito = inscricoes.find(
-    (i) => i.eventoId === eventoId && i.participanteId === participanteId,
-  );
-  if (jaInscrito) {
-    throw new ValidationError("Participante já inscrito neste evento");
-  }
-  const novaInscricao = {
-    id: proximoId,
-    eventoId,
-    participanteId,
-    dataInscricao: new Date().toISOString(),
-    status: "confirmada",
-  };
-  
-  proximoId++;
-  inscricoes.push(novaInscricao);
-  return novaInscricao;
-}
+// src/models/InscricaoModel.js
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/database");
+const Inscricao = sequelize.define(
+  "Inscricao",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    dataInscricao: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+      field: "data_inscricao",
+    },
+    status: {
+      type: DataTypes.ENUM("confirmada", "cancelada"),
+      allowNull: false,
+      defaultValue: "confirmada",
+    },
+  },
+  {
+    tableName: "inscricoes",
+    timestamps: true,
+    underscored: true,
+  },
+);
+module.exports = Inscricao;

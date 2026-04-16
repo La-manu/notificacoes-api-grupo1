@@ -1,5 +1,5 @@
 // src/services/EventoService.js
-const EventoModel = require("../models/EventoModel");
+const EventoModel = require("../models-antigos/EventoModel");
 
 const { NotFoundError, ValidationError } = require("../errors/AppError");
 
