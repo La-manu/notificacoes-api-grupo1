@@ -1,60 +1,62 @@
 // src/services/InscricaoService.js
-const InscricaoModel = require("../models-antigos/InscricaoModel");
-const EventoModel = require("../models-antigos/EventoModel");
-const ParticipanteModel = require("../models-antigos/ParticipanteModel");
-const { NotFoundError, ValidationError } = require("../errors/AppError");
+const { Inscricao, Evento, Participante } = require('../models');
+const { NotFoundError, ValidationError } = require('../errors/AppError');
 const { isRequired, validar } = require("../helpers/validators");
 
-function criar(dados) {
+async function criar(dados) {
   const { eventoId, participanteId } = dados;
 
-  // Validar campos obrigatórios
-  const erros = validar([
-    isRequired(eventoId, "eventoId"),
-    isRequired(participanteId, "participanteId"),
-  ]);
-  if (erros) throw new ValidationError(erros.join("; "));
+  // Verificar se o evento existe
+  const evento = await Evento.findByPk(eventoId);
+  if (!evento) throw new NotFoundError('Evento');
 
-  // Verificar se evento existe
-  const evento = EventoModel.buscarPorId(parseInt(eventoId));
-  if (!evento) throw new NotFoundError("Evento");
+  // Verificar se o participante existe
+  const participante = await Participante.findByPk(participanteId);
+  if (!participante) throw new NotFoundError('Participante');
 
-  // Verificar se participante existe
-  const participante = ParticipanteModel.buscarPorId(parseInt(participanteId));
-  if (!participante) throw new NotFoundError("Participante");
+  // Verificar duplicata
+  const jaInscrito = await Inscricao.findOne({
+    where: { evento_id: eventoId, participante_id: participanteId }
+  });
+  if (jaInscrito) throw new ValidationError('Participante já inscrito neste evento');
 
-  try {
-    return InscricaoModel.criar(parseInt(eventoId), parseInt(participanteId));
-  } catch (erro) {
-    // Se o erro for de duplicata, você pode lançar um ValidationError mais claro
-    if (erro.message.includes("duplicada") || erro.code === "P2002") {
-      throw new ValidationError(
-        "Este participante já está inscrito neste evento.",
-      );
-    }
-    throw erro; // Repassa outros erros inesperados
-  }
+  // Criar a inscrição
+  const novaInscricao = await Inscricao.create({
+    evento_id: eventoId,
+    participante_id: participanteId,
+  });
+
+  return novaInscricao;
 }
 
-
-// parte da amanda
-function listarTodas() {
-  return InscricaoModel.listarTodas();
+async function listarTodas() {
+  // Listar com dados do evento e participante incluídos!
+  const inscricoes = await Inscricao.findAll({
+    include: [
+      { model: Evento, as: 'evento', attributes: ['id', 'nome', 'data'] },
+      { model: Participante, as: 'participante', attributes: ['id', 'nome', 'email'] },
+    ],
+    order: [['created_at', 'DESC']],
+  });
+  return inscricoes;
 }
 
-function listarPorEvento(eventoId) {
-  const evento = EventoModel.buscarPorId(parseInt(eventoId));
-  if (!evento) throw new NotFoundError("Evento não encontrado");
-
-  return InscricaoModel.listarPorEvento(parseInt(eventoId));
+async function listarPorEvento(eventoId) {
+  const evento = await Evento.findByPk(eventoId);
+  if (!evento) throw new NotFoundError('Evento');
+  return await Inscricao.findAll({
+    where: { evento_id: eventoId },
+    include: [
+      { model: Participante, as: 'participante', attributes: ['id', 'nome', 'email'] },
+    ],
+    order: [['created_at', 'DESC']],
+  })
 }
 
-function cancelar(id) {
-  const cancelado = InscricaoModel.cancelar(id);
-  if (!cancelado) {
-    throw new NotFoundError("Inscricao");
-  }
-  return true;
+async function cancelar(id) {
+  const inscricao = await Inscricao.findByPk(id);
+  if (!inscricao) throw new NotFoundError('Inscrição');
+  return await inscricao.update({ status: 'cancelada' });
 }
 
 module.exports = { criar, listarTodas, listarPorEvento, cancelar };

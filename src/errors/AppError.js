@@ -20,4 +20,16 @@ class ValidationError extends AppError {
   }
 }
 
+function isRequired(valor, campo) {
+  if (!valor) return `${campo} é obrigatório`;
+  return null;
+}
+
+function validar(erros) {
+  const lista = erros.filter(Boolean);
+  return lista.length > 0 ? lista : null;
+}
+
+module.exports = { validar, isRequired };
+
 module.exports = { AppError, NotFoundError, ValidationError };

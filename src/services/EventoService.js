@@ -1,66 +1,72 @@
 // src/services/EventoService.js
-const EventoModel = require("../models-antigos/EventoModel");
+const { Evento } = require('../models');
+const { NotFoundError, ValidationError } = require('../errors/AppError');
 
-const { NotFoundError, ValidationError } = require("../errors/AppError");
-
-const {
-  isRequired,
-  isPositiveInteger,
-  minLength,
-  validar,
-} = require("../helpers/validators");
-
-function listarTodos() {
-  return EventoModel.listarTodos();
+async function listarTodos() {
+  const eventos = await Evento.findAll({
+    order: [['data', 'ASC']],
+  });
+  return eventos;
 }
 
-function buscarPorId(id) {
-  const evento = EventoModel.buscarPorId(id);
+async function buscarPorId(id) {
+  const evento = await Evento.findByPk(id);
+
   if (!evento) {
-    throw new NotFoundError("Evento");
+    throw new NotFoundError('Evento');
   }
+
   return evento;
 }
 
-function criar(dados) {
-  const { nome, descricao, data, local, capacidade } = dados;
-  // Validação
-  const erros = validar([
-    isRequired(nome, "Nome"),
-    isRequired(data, "Data"),
-    minLength(nome, 3, "Nome"),
-    isPositiveInteger(capacidade, "Capacidade"),
-  ]);
-  if (erros) {
-    throw new ValidationError(erros.join("; "));
+async function criar(dados) {
+  try {
+    const novoEvento = await Evento.create(dados);
+    return novoEvento;
+  } catch (erro) {
+    // O Sequelize lança SequelizeValidationError para validações do Model
+    if (erro.name === 'SequelizeValidationError') {
+      const mensagens = erro.errors.map(e => e.message).join('; ');
+      throw new ValidationError(mensagens);
+    }
+    throw erro;
   }
-  return EventoModel.criar({ nome, descricao, data, local, capacidade });
 }
 
-function atualizar(id, dados) {
-  const { nome, capacidade } = dados;
-  // Validações (campos opcionais no update)
-  const erros = validar([
-    minLength(nome, 3, "Nome"),
-    isPositiveInteger(capacidade, "Capacidade"),
-  ]);
-  if (erros) {
-    throw new ValidationError(erros.join("; "));
+// Atualizar e Deletar vamos implementar na próxima aula
+async function atualizar(id, dados) {
+  const evento = await Evento.findByPk(id);
+
+  if (!evento) {
+    throw new NotFoundError('Evento');
   }
-  const eventoAtualizado = EventoModel.atualizar(id, dados);
-  if (!eventoAtualizado) {
-    throw new NotFoundError("Evento");
+
+  try {
+    await evento.update(dados);
+    return evento;
+  } catch (erro) {
+    if (erro.name === 'SequelizeValidationError') {
+      const mensagens = erro.errors.map(e => e.message).join('; ');
+      throw new ValidationError(mensagens);
+    }
+    throw erro;
   }
-  return eventoAtualizado;
 }
 
-function deletar(id) {
-  const deletado = EventoModel.deletar(id);
-  if (!deletado) {
-    throw new NotFoundError("Evento");
+async function deletar(id) {
+  const evento = await Evento.findByPk(id);
+
+  if (!evento) {
+    throw new NotFoundError('Evento');
   }
+
+  await evento.destroy();
   return true;
 }
+
+
+
+
 
 module.exports = {
   listarTodos,
