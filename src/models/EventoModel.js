@@ -36,6 +36,10 @@ const Evento = sequelize.define(
         min: { args: [1], msg: "Capacidade deve ser pelo menos 1" },
       },
     },
+    banner: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     tableName: "eventos",
@@ -44,4 +48,5 @@ const Evento = sequelize.define(
     underscored: true, // usa snake_case nas colunas (created_at em vez de createdAt)
   },
 );
+
 module.exports = Evento;
