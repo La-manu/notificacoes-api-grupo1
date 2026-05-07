@@ -7,6 +7,17 @@ const { create } = require("xmlbuilder2");
 const { Inscricao, Evento, Participante } = require("../models");
 
 
+/**
+ * @swagger
+ * /exportar/eventos/xml:
+ * get:
+ * summary: Exporta a lista de eventos em formato XML
+ * tags: [Exportação]
+ * responses:
+ * 200:
+ * description: Arquivo XML gerado com sucesso
+ */
+router.get('/eventos/xml', exportController.xml);
 
 // GET /exportar/eventos/xml — exportar eventos em XML
 router.get("/eventos/xml", async (req, res, next) => {
@@ -47,6 +58,18 @@ router.get("/eventos/xml", async (req, res, next) => {
     next(erro);
   }
 });
+
+/**
+ * @swagger
+ * /exportar/eventos/json:
+ * get:
+ * summary: Exporta a lista de eventos em formato JSON
+ * tags: [Exportação]
+ * responses:
+ * 200:
+ * description: Lista de eventos em JSON
+ */
+router.get('/eventos/json', exportController.json);
 
 // GET /exportar/eventos/json — exportar eventos em JSON (download)
 router.get("/eventos/json", async (req, res, next) => {
@@ -136,6 +159,20 @@ router.get('/inscricao/xml', async (req, res, next) => {
     next(erro);
   }
 });
+
+/**
+ * @swagger
+ * /exportar/relatorio/inscricoes:
+ * get:
+ * summary: Gera um relatório completo de inscrições
+ * tags: [Exportação]
+ * responses:
+ * 200:
+ * description: Relatório gerado com sucesso
+ * 500:
+ * description: Erro interno no servidor
+ */
+router.get('/relatorio/inscricoes', exportController.relatorio);
 
 router.get('/relatorio/inscricoes', async (req, res, next) => {
   try {

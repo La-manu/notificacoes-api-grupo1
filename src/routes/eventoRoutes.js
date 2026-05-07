@@ -3,8 +3,11 @@ const express = require("express");
 const router = express.Router();
 const EventoController = require("../controllers/EventoController");
 const upload = require('../config/upload');
+const cacheMiddleware = require('../middlewares/cacheMiddleware');
 
 router.get("/futuros", EventoController.listarFuturos);
+
+
 
 /**
  * @swagger
@@ -59,7 +62,7 @@ router.get("/futuros", EventoController.listarFuturos);
  *               items:
  *                 $ref: '#/components/schemas/Evento'
  */
-router.get("/", EventoController.index);
+router.get('/', cacheMiddleware(30), EventoController.index);
 
 /**
  * @swagger
@@ -84,7 +87,8 @@ router.get("/", EventoController.index);
  *       404:
  *         description: Evento não encontrado
  */
-router.get("/:id", EventoController.show);
+router.get('/:id', cacheMiddleware(60), EventoController.show);
+
 
 /**
  * @swagger
@@ -183,6 +187,36 @@ router.put("/:id", EventoController.update);
  */
 router.delete("/:id", EventoController.destroy);
 
+/**
+ * @swagger
+ * /eventos/{id}/banner:
+ * post:
+ * summary: Faz o upload de uma imagem de banner para um evento específico
+ * tags: [Eventos]
+ * parameters:
+ * - in: path
+ * name: id
+ * required: true
+ * schema:
+ * type: integer
+ * description: ID numérico do evento
+ * requestBody:
+ * content:
+ * multipart/form-data:
+ * schema:
+ * type: object
+ * properties:
+ * banner:
+ * type: string
+ * format: binary
+ * responses:
+ * 200:
+ * description: Banner enviado com sucesso
+ * 404:
+ * description: Evento não encontrado
+ */
+router.post('/:id/banner', upload.single('banner'), eventoController.uploadBanner);
+
 router.post('/:id/banner', upload.single('banner'), async (req, res, next) => {
   try {
     const { Evento } = require('../models');
@@ -208,4 +242,24 @@ router.post('/:id/banner', upload.single('banner'), async (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /eventos/{id}/banner:
+ * post:
+ * summary: Faz o upload de um banner para o evento
+ * parameters:
+ * - in: path
+ * name: id
+ * required: true
+ * schema:
+ * type: string
+ * description: ID do evento
+ * responses:
+ * 200:
+ * description: Banner enviado com sucesso
+ */
+router.post('/eventos/:id/banner', controller.uploadBanner);
+
 module.exports = router;
+
+
