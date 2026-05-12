@@ -2,7 +2,6 @@
   "info": {
     "_postman_id": "86522023-e20d-44d4-a8c7-2b4a5721cc06",
     "name": "Notificações API",
-    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "52940031",
     "_collection_link": "https://go.postman.co/collection/52940031-86522023-e20d-44d4-a8c7-2b4a5721cc06?source=collection_link"
@@ -36,7 +35,83 @@
             "method": "GET",
             "header": []
           },
-          "response": []
+          "response": [
+            {
+              "name": "criar um evento",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "banner",
+                      "type": "file",
+                      "uuid": "b0f03461-a823-410a-9ced-ef79b68f8144",
+                      "src": "/C:/Users/NB23-2DEV/Downloads/Gemini_Generated_Image_egfez2egfez2egfe.png"
+                    }
+                  ],
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:3001/eventos/1/banner",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3001",
+                  "path": [
+                    "eventos",
+                    "1",
+                    "banner"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "33"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"21-FhmM580eIBC1NpmFWr1kTqzUP5Q\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 05 May 2026 13:48:32 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"erro\": \"Evento não encontrado\"\n}"
+            }
+          ]
         },
         {
           "name": "deletar",
@@ -56,6 +131,109 @@
         },
         {
           "name": "listar eventos",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Inscrições",
+      "item": [
+        {
+          "name": "listar participantes",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "adicionar inscricao",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "listar inscricao por evento",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "cancelar",
+          "request": {
+            "method": "PATCH",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Participantes",
+      "item": [
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Exportação",
+      "item": [
+        {
+          "name": "eventos 2 get",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "INSCRICOES 2",
           "request": {
             "method": "GET",
             "header": []
