@@ -89,11 +89,17 @@ notificacoes-api-grupo1/
 ├── docs/
 ├── src/
 │   ├── config/
-│   │   └── database.js
+│       ├── cache.js 
+        ├── database.js
+        ├── database.json.example
+        ├── upload.js
 │   ├── controllers/
 │   │   ├── EventoController.js
 │   │   ├── InscricaoController.js
 │   │   └── ParticipanteController.js
+    ├── database
+        ├── migrations
+        ├── seeders 
 │   ├── errors/
 │   │   └── AppError.js
 │   ├── helpers/
@@ -103,6 +109,7 @@ notificacoes-api-grupo1/
 │   │   ├── logger.js
 │   │   ├── notFound.js
 │   │   └── responseTime.js
+        ├── cacheMiddleware
 │   ├── models/
 │   │   ├── EventoModel.js
 │   │   ├── index.js
@@ -117,6 +124,7 @@ notificacoes-api-grupo1/
 │   │   ├── eventoRoutes.js
 │   │   ├── inscricaoRoutes.js
 │   │   └── participanteRoutes.js
+        ├── exportRoutes.js
 │   ├── services/
 │   │   ├── EventoService.js
 │   │   ├── InscricaoService.js
