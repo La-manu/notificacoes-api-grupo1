@@ -31,6 +31,17 @@ async function criar(dados) {
     }
     throw erro;
   }
+
+  appEmitter.on('evento:criado', (evento) => {
+
+  const fs = require('fs');
+
+  const linha = `[${new Date().toISOString()}] Evento #${evento.id} criado\n`;
+
+  fs.appendFileSync('logs/app.log', linha);
+
+});
+
 }
 
 // Atualizar e Deletar vamos implementar na próxima aula
@@ -110,3 +121,22 @@ module.exports = {
   deletar,
   listarFuturos,
 };
+
+
+// src/services/EventoService.js
+const { Evento } = require("../models");
+const appEmitter = require("../events/eventEmitter"); // Importa o mesmo emitter
+
+class EventoService {
+  async criar(dadosEvento) {
+    // 1. Cria o evento no banco de dados
+    const novoEvento = await Evento.create(dadosEvento);
+
+    // 2. Emite o evento para os observers com os dados do novo evento
+    appEmitter.emit("evento:criado", novoEvento);
+
+    return novoEvento;
+  }
+}
+
+module.exports = new EventoService();

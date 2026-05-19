@@ -1,6 +1,8 @@
 // src/server.js
 require("dotenv").config();
-
+// No seu app.js ou server.js
+require("./src/events/notificacaoObserver");
+require("./src/events/logObserver"); // Adicione essa linha para ativar o observer de eventos
 const app = require("./app");
 const { sequelize } = require("./models");
 
