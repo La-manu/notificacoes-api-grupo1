@@ -1,5 +1,5 @@
 // src/routes/participanteRoutes.js
-
+const appEmitter = require("../events/eventEmitter");
 const express = require("express");
 const router = express.Router();
 const ParticipanteController = require("../controllers/ParticipanteController");
@@ -101,7 +101,31 @@ router.get("/:id", ParticipanteController.show);
  *       400:
  *         description: Dados inválidos
  */
-router.post("/", ParticipanteController.store);
+router.post("/", async (req, res, next) => {
+  try {
+    // 1. Cria uma resposta interceptando a função original do Controller
+    const originalJson = res.json;
+    
+    // Modifica temporariamente o res.json para capturar os dados do participante criado
+    res.json = function (dados) {
+      if (res.statusCode === 201 || dados.id) {
+        console.log(`[ROTAS] Interceptado! Participante criado: ${dados.nome}`);
+        
+        // 2. Força o disparo do evento para o notificacaoObserver
+        if (appEmitter) {
+          appEmitter.emit("participante:criado", dados);
+          console.log("[ROTAS] Evento 'participante:criado' disparado com sucesso!");
+        }
+      }
+      return originalJson.call(this, dados);
+    };
+
+    // Executa o controller padrão do projeto
+    await ParticipanteController.store(req, res, next);
+  } catch (erro) {
+    next(erro);
+  }
+});
 
 /**
  * @swagger

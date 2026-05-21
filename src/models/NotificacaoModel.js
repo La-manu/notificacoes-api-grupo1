@@ -1,6 +1,7 @@
 // src/models/NotificacaoModel.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
+
 const Notificacao = sequelize.define(
   "Notificacao",
   {
@@ -39,6 +40,12 @@ const Notificacao = sequelize.define(
       allowNull: false,
       defaultValue: false,
     },
+    // ✨ CORREÇÃO CIRÚRGICA: Mapeia o JavaScript para a coluna correta do banco
+    inscricaoId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "inscricao_id", // 👈 Informamos que no MySQL o nome é com underline
+    },
   },
   {
     tableName: "notificacoes",
@@ -46,4 +53,5 @@ const Notificacao = sequelize.define(
     underscored: true,
   },
 );
+
 module.exports = Notificacao;

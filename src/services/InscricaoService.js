@@ -4,7 +4,6 @@ const { NotFoundError, ValidationError } = require('../errors/AppError');
 const { isRequired, validar } = require("../helpers/validators");
 const appEmitter = require('../events/eventEmitter');
 
-
 async function criar(dados) {
   const { eventoId, participanteId } = dados;
 
@@ -27,17 +26,24 @@ async function criar(dados) {
     evento_id: eventoId,
     participante_id: participanteId,
   });
-  // Emitir evento — os observers serão notificados
 
-  appEmitter.emit('inscricao:criada', novaInscricao);
+  // 💡 AJUSTE DE OURO: Busca os dados completos para que o Observer de Log e E-mail consiga ler o nome do evento e e-mail
+  const inscricaoCompleta = await Inscricao.findByPk(novaInscricao.id, {
+    include: [
+      { model: Evento, as: 'evento', attributes: ['nome', 'data'] },
+      { model: Participante, as: 'participante', attributes: ['nome', 'email'] },
+    ],
+  });
 
-  return novaInscricao;
+  // Emitir evento passando o objeto completo com os relacionamentos carregados
+  if (appEmitter) {
+    appEmitter.emit('inscricao:criada', inscricaoCompleta);
+  }
 
+  return inscricaoCompleta;
 }
 
-
 async function listarTodas() {
-  // Listar com dados do evento e participante incluídos!
   const inscricoes = await Inscricao.findAll({
     include: [
       { model: Evento, as: 'evento', attributes: ['id', 'nome', 'data'] },
@@ -57,22 +63,29 @@ async function listarPorEvento(eventoId) {
       { model: Participante, as: 'participante', attributes: ['id', 'nome', 'email'] },
     ],
     order: [['created_at', 'DESC']],
-  })
+  });
 }
 
 async function cancelar(id) {
-  const inscricao = await Inscricao.findByPk(id);
-  if (!inscricao) throw new NotFoundError('Inscrição');
-  return await inscricao.update({ status: 'cancelada' });
+  // Busca a inscrição trazendo também quem é o participante e o evento (necessário para logs/avisos)
+  const inscricao = await Inscricao.findByPk(id, {
+    include: [
+      { model: Evento, as: 'evento', attributes: ['nome'] },
+      { model: Participante, as: 'participante', attributes: ['nome', 'email'] },
+    ]
+  });
   
+  if (!inscricao) throw new NotFoundError('Inscrição');
+
+  // Atualiza o status no banco de dados
   await inscricao.update({ status: 'cancelada' });
 
-  // Emitir evento de cancelamento
-
-  appEmitter.emit('inscricao:cancelada', inscricao);
+  // 🚀 CORREÇÃO: Agora o evento é emitido antes do return final!
+  if (appEmitter) {
+    appEmitter.emit('inscricao:cancelada', inscricao);
+  }
 
   return inscricao;
-
 }
 
 module.exports = { criar, listarTodas, listarPorEvento, cancelar };

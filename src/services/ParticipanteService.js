@@ -1,6 +1,7 @@
-// src/services/ParticipanteService.js
+const appEmitter = require('../events/eventEmitter');
 const { Participante } = require('../models');
 const { NotFoundError } = require('../errors/AppError');
+
 
 async function listarTodos() {
   const participante = await Participante.findAll({
@@ -20,19 +21,26 @@ async function buscarPorId(id) {
   return participante;
 }
 
-async function criar(dados) {
+// Dentro da função que faz o cadastro:
+async function criar(req, res, next) {
   try {
-    const novoParticipante = await Participante.create(dados);
-    return novoParticipante;
-  } catch (erro) {
-    if (erro.name === 'SequelizeValidationError') {
-      const mensagens = erro.error.map(e => e.message).join(';');
-      throw new validationError (mensagens);
+    // Linha existente que cria o participante (pode estar chamando o Service ou o Model direto)
+    const novoParticipante = await Participante.create(req.body); 
+
+    // ✨ COLOQUE O DISPARO DIRETAMENTE AQUI NO CONTROLLER:
+    if (appEmitter && typeof appEmitter.emit === 'function') {
+      appEmitter.emit("participante:criado", novoParticipante);
+      console.log("[CONTROLLER] Evento emitido com sucesso!");
+    } else {
+      console.log("[CONTROLLER] Erro: appEmitter não foi importado corretamente.");
     }
-    throw erro;
+
+    return res.status(201).json(novoParticipante);
+  } catch (erro) {
+    next(erro);
   }
-  
 }
+
 
 // Atualizar e deletar ficam para a próxima aula
 async function atualizar(id, dados) { /* TODO */ }

@@ -22,13 +22,14 @@ Inscricao.belongsTo(Participante, {
 });
 
 // Uma Inscrição tem muitas Notificações
+// ✨ Corrigido: Ambos os lados agora usam obrigatoriamente "inscricao_id"
 Inscricao.hasMany(Notificacao, {
   foreignKey: "inscricao_id",
   as: "notificacoes",
 });
-Notificacao.belongsTo(Inscricao, {
-  foreignKey: "inscricao_id",
-  as: "inscricao",
+Notificacao.belongsTo(Inscricao, { 
+  foreignKey: "inscricao_id", 
+  as: "inscricao" 
 });
 
 module.exports = {
