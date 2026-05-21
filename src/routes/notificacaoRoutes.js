@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const { Notificacao, Inscricao, Evento, Participante } = require("../models");
 const EmailService = require('../services/EmailService');
+const lembreteEvento = require('../templates/email/lembreteEventos');
+
+
 
 // GET /notificacoes — Listar todas as notificações
 router.get("/", async (req, res, next) => {
@@ -51,6 +54,21 @@ router.post('/teste-email', async (req, res, next) => {
 
   } catch (erro) {
     console.error("❌ [Rotas] Erro ao enviar e-mail de teste:", erro);
+    next(erro);
+  }
+});
+
+// POST /notificacoes/processar-lembretes — Executa a rotina real de disparos pelo banco de dados
+router.post('/processar-lembretes', async (req, res, next) => {
+  try {
+    // Chama o processo de varredura real que acabamos de colocar no EmailService
+    const resultado = await EmailService.enviarLembretesDiarios();
+    
+    res.json({
+      mensagem: "Rotina de e-mails executada com sucesso com dados do banco MySQL!",
+      quantidadeProcessada: resultado.processados
+    });
+  } catch (erro) {
     next(erro);
   }
 });
