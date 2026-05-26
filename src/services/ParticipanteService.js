@@ -42,8 +42,57 @@ async function criar(req, res, next) {
 }
 
 
+/**
+ * @swagger
+ * /api/upload:
+ * post:
+ * summary: Realiza o upload de uma única imagem
+ * description: Envia uma imagem para o servidor. O arquivo é validado por tipo (JPEG, PNG, GIF, WebP) e tamanho máximo de 5MB.
+ * tags:
+ * - Upload
+ * requestBody:
+ * required: true
+ * content:
+ * multipart/form-data:
+ * schema:
+ * type: object
+ * properties:
+ * file:
+ * type: string
+ * format: binary
+ * description: O arquivo de imagem a ser enviado.
+ * responses:
+ * 200:
+ * description: Arquivo enviado e salvo com sucesso.
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * mensagem:
+ * type: string
+ * example: "Arquivo enviado com sucesso!"
+ * filename:
+ * type: string
+ * example: "1716728400000-482910482.png"
+ * 400:
+ * description: Erro na validação do arquivo (tamanho ou tipo inválido).
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * error:
+ * type: string
+ * example: "Tipo de arquivo não permitido. Use: JPEG, PNG, GIF ou WebP"
+ */
+
+
 // Atualizar e deletar ficam para a próxima aula
 async function atualizar(id, dados) { /* TODO */ }
+
+
 async function deletar(id) { /* TODO */ }
+
 
 module.exports = { listarTodos, buscarPorId, criar, atualizar, deletar };

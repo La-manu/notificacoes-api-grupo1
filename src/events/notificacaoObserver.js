@@ -25,6 +25,22 @@ appEmitter.on("inscricao:criada", async (inscricao) => {
     const dados = await buscarDadosInscricao(inscricao.id);
     if (!dados) return;
 
+    // Dentro do observer, ANTES de criar a notificação:
+
+    const jaNotificado = await Notificacao.findOne({
+      where: {
+        inscricao_id: inscricao.id,
+        tipo: "confirmacao",
+        // Complete: que outra condição faz sentido aqui?
+        destinatario_email: inscricao.participante.email,
+      },
+    });
+
+    if (jaNotificado) {
+      console.log("[NOTIFICAÇÃO] Confirmação já enviada, ignorando duplicata");
+      return;
+    }
+
     const { evento, participante } = dados;
     const assunto = `Inscrição confirmada: ${evento.nome}`;
     const html = confirmacaoInscricao({

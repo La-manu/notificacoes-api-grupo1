@@ -1,31 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { Notificacao, Inscricao, Evento, Participante } = require("../models");
-const EmailService = require('../services/EmailService');
-const lembreteEvento = require('../templates/email/lembreteEventos');
+const NotificacaoService = require("../services/NotificacaoService");
+const EmailService = require("../services/EmailService");
 
 
-
-// GET /notificacoes — Listar todas as notificações
+// GET /notificacoes — listar com filtros
 router.get("/", async (req, res, next) => {
   try {
-    const notificacoes = await Notificacao.findAll({
-      include: [
-        {
-          model: Inscricao,
-          as: "inscricao",
-          foreignKey: "inscricao_id", // 👈 ISSO DAQUI FORÇA O SEQUELIZE A USAR A COLUNA CORRETA DO MYSQL
-          include: [
-            { model: Evento, as: "evento", attributes: ["nome"] },
-            {
-              model: Participante,
-              as: "participante",
-              attributes: ["nome", "email"],
-            },
-          ],
-        },
-      ],
-      order: [["created_at", "DESC"]],
+    const notificacoes = await NotificacaoService.listarTodas({
+      tipo: req.query.tipo,
+      enviada: req.query.enviada,
     });
     res.json(notificacoes);
   } catch (erro) {
@@ -33,44 +17,202 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// POST /notificacoes/teste-email — Enviar e-mail de teste via MailPit
-router.post('/teste-email', async (req, res, next) => {
+// GET /notificacoes/estatisticas — dashboard de envios
+router.get("/estatisticas", async (req, res, next) => {
   try {
-    console.log("📥 [Rotas] Iniciando requisição de e-mail de teste...");
+    const stats = await NotificacaoService.obterEstatisticas();
+    res.json(stats);
+  } catch (erro) {
+    next(erro);
+  }
+});
 
-    const resultado = await EmailService.enviar(
-      'teste@exemplo.com',
-      'Teste da API de Notificações',
-      '<h1>Funcionou! 🎉</h1><p>Este e-mail foi enviado pela nossa API.</p>'
+// GET /notificacoes/:id — detalhes de uma notificação
+router.get("/:id", async (req, res, next) => {
+  try {
+    const notificacao = await NotificacaoService.buscarPorId(
+      parseInt(req.params.id),
     );
+    res.json(notificacao);
+  } catch (erro) {
+    next(erro);
+  }
+});
 
-    console.log("✅ [Rotas] Resposta do EmailService recebida com sucesso.");
-
+// POST /notificacoes/:id/reenviar — reenviar uma notificação
+router.post("/:id/reenviar", async (req, res, next) => {
+  try {
+    const resultado = await NotificacaoService.reenviar(
+      parseInt(req.params.id),
+    );
     res.json({
-      mensagem: 'E-mail de teste enviado!',
-      messageId: resultado.messageId,
+      mensagem: "Notificação reenviada com sucesso",
       visualizarEm: resultado.visualizarEm,
     });
-
   } catch (erro) {
-    console.error("❌ [Rotas] Erro ao enviar e-mail de teste:", erro);
     next(erro);
   }
 });
 
-// POST /notificacoes/processar-lembretes — Executa a rotina real de disparos pelo banco de dados
-router.post('/processar-lembretes', async (req, res, next) => {
+// POST /notificacoes/teste-email — enviar e-mail de teste
+router.post("/teste-email", async (req, res, next) => {
   try {
-    // Chama o processo de varredura real que acabamos de colocar no EmailService
-    const resultado = await EmailService.enviarLembretesDiarios();
-    
+    const resultado = await EmailService.enviar(
+      "teste@exemplo.com",
+      "Teste da API de Notificações",
+      "<h1>Funcionou! 🎉</h1><p>Este e-mail foi enviado pela nossa API.</p>",
+    );
     res.json({
-      mensagem: "Rotina de e-mails executada com sucesso com dados do banco MySQL!",
-      quantidadeProcessada: resultado.processados
+      mensagem: "E-mail de teste enviado!",
+      visualizarEm: resultado.visualizarEm,
     });
   } catch (erro) {
     next(erro);
   }
 });
+
+/**
+
+ * @swagger
+
+ * components:
+
+ *   schemas:
+
+ *     Notificacao:
+
+ *       type: object
+
+ *       properties:
+
+ *         id:
+
+ *           type: integer
+
+ *         tipo:
+
+ *           type: string
+
+ *           enum: [confirmacao, lembrete]
+
+ *         destinatario_email:
+
+ *           type: string
+
+ *         assunto:
+
+ *           type: string
+
+ *         enviada:
+
+ *           type: boolean
+
+ *         data_envio:
+
+ *           type: string
+
+ *           format: date-time
+
+ */
+
+/**
+
+ * @swagger
+
+ * /notificacoes:
+
+ *   get:
+
+ *     summary: Listar notificações
+
+ *     tags: [Notificações]
+
+ *     parameters:
+
+ *       - in: query
+
+ *         name: tipo
+
+ *         schema:
+
+ *           type: string
+
+ *           enum: [confirmacao, lembrete]
+
+ *       - in: query
+
+ *         name: enviada
+
+ *         schema:
+
+ *           type: string
+
+ *           enum: [true, false]
+
+ *     responses:
+
+ *       200:
+
+ *         description: Lista de notificações
+
+ */
+
+/**
+
+ * @swagger
+
+ * /notificacoes/estatisticas:
+
+ *   get:
+
+ *     summary: Estatísticas de envio
+
+ *     tags: [Notificações]
+
+ *     responses:
+
+ *       200:
+
+ *         description: Contagens de notificações
+
+ */
+
+/**
+
+ * @swagger
+
+ * /notificacoes/{id}/reenviar:
+
+ *   post:
+
+ *     summary: Reenviar uma notificação
+
+ *     tags: [Notificações]
+
+ *     parameters:
+
+ *       - in: path
+
+ *         name: id
+
+ *         required: true
+
+ *         schema:
+
+ *           type: integer
+
+ *     responses:
+
+ *       200:
+
+ *         description: Notificação reenviada
+
+ *       404:
+
+ *         description: Notificação não encontrada
+
+ */
+
+// 💡 Se o grupo tiver tempo, documentem também as rotas de exportação e upload.
 
 module.exports = router;

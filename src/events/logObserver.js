@@ -20,7 +20,7 @@ if (!fs.existsSync(arquivoLog)) {
 
 appEmitter.on('inscricao:criada', async (inscricao) => {
   try {
-    // ... seu código de enviar e-mail fica aqui em cima ...
+   
 
     // Descobre o e-mail de forma segura para não vir null
     const emailDestinatario = inscricao.participante?.email || 'teste@exemplo.com';
