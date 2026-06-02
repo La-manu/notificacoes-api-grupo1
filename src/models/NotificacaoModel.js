@@ -44,7 +44,7 @@ const Notificacao = sequelize.define(
     inscricaoId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      field: "inscricao_id", // 👈 Informamos que no MySQL o nome é com underline
+      field: "inscricao_id", 
     },
   },
   {

@@ -18,4 +18,4 @@
 | 14 | Upload de banner | `POST /eventos/2/banner` (form-data) | Banner salvo |
 | 15 | Swagger completo | `GET /api-docs` | Página funcional | ✅
 | 16 | **Reiniciar servidor** | `Ctrl+C` + `npm run dev` | — | ✅
-| 17 | Listar eventos | `GET /eventos` | Tudo persiste! | ✅
+| 17 | Listar eventos | `GET /eventos` | Tudo persiste! | ✅ 

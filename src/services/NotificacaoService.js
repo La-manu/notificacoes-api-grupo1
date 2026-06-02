@@ -109,6 +109,7 @@ async function obterEstatisticas() {
   };
 }
 
+
 module.exports = {
   listarTodas,
   buscarPorId,

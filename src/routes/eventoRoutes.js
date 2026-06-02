@@ -42,23 +42,77 @@ router.get("/futuros", EventoController.listarFuturos);
  *         data: "2025-08-15"
  *         local: SENAI - Sala 3
  *         capacidade: 30
+ *     Erro:
+ *       type: object
+ *       properties:
+ *         erro:
+ *           type: object
+ *           properties:
+ *             tipo:
+ *               type: string
+ *               example: NotFoundError
+ *             mensagem:
+ *               type: string
+ *               example: Evento não encontrado(a)
+ *             statusCode:
+ *               type: integer
+ *               example: 404
  */
 
 /**
  * @swagger
  * /eventos:
  *   get:
- *     summary: Listar todos os eventos
+ *     summary: Listar eventos com paginação e filtros
  *     tags: [Eventos]
+ *     parameters:
+ *       - in: query
+ *         name: pagina
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Número da página
+ *       - in: query
+ *         name: porPagina
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Itens por página
+ *       - in: query
+ *         name: busca
+ *         schema:
+ *           type: string
+ *         description: Buscar por nome do evento
+ *       - in: query
+ *         name: ordenarPor
+ *         schema:
+ *           type: string
+ *           default: data
+ *         description: Campo para ordenação
+ *       - in: query
+ *         name: ordem
+ *         schema:
+ *           type: string
+ *           enum: [ASC, DESC]
+ *           default: ASC
  *     responses:
  *       200:
- *         description: Lista de eventos
+ *         description: Lista paginada de eventos
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Evento'
+ *               type: object
+ *               properties:
+ *                 dados:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Evento'
+ *                 total:
+ *                   type: integer
+ *                 pagina:
+ *                   type: integer
+ *                 totalPaginas:
+ *                   type: integer
  */
 router.get("/", cacheMiddleware(30), EventoController.index);
 
@@ -84,6 +138,10 @@ router.get("/", cacheMiddleware(30), EventoController.index);
  *               $ref: '#/components/schemas/Evento'
  *       404:
  *         description: Evento não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Erro'
  */
 router.get("/:id", cacheMiddleware(60), EventoController.show);
 
@@ -187,7 +245,7 @@ router.delete("/:id", EventoController.destroy);
  * @swagger
  * /eventos/{id}/banner:
  *   post:
- *     summary: Faz o upload de uma imagem de banner para um evento específico
+ *     summary: Fazer upload do banner do evento
  *     tags: [Eventos]
  *     parameters:
  *       - in: path
@@ -195,8 +253,8 @@ router.delete("/:id", EventoController.destroy);
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID numérico do evento
  *     requestBody:
+ *       required: true
  *       content:
  *         multipart/form-data:
  *           schema:
@@ -205,9 +263,12 @@ router.delete("/:id", EventoController.destroy);
  *               banner:
  *                 type: string
  *                 format: binary
+ *                 description: Imagem do banner (JPEG, PNG, GIF, WebP — máx 5MB)
  *     responses:
  *       200:
- *         description: Banner enviado com sucesso
+ *         description: Banner atualizado
+ *       400:
+ *         description: Nenhum arquivo enviado ou tipo inválido
  *       404:
  *         description: Evento não encontrado
  */

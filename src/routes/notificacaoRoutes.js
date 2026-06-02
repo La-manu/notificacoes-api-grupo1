@@ -72,147 +72,127 @@ router.post("/teste-email", async (req, res, next) => {
 });
 
 /**
-
  * @swagger
-
  * components:
-
  *   schemas:
-
  *     Notificacao:
-
  *       type: object
-
  *       properties:
-
  *         id:
-
  *           type: integer
-
  *         tipo:
-
  *           type: string
-
  *           enum: [confirmacao, lembrete]
-
  *         destinatario_email:
-
  *           type: string
-
  *         assunto:
-
  *           type: string
-
  *         enviada:
-
  *           type: boolean
-
  *         data_envio:
-
  *           type: string
-
  *           format: date-time
-
  */
 
 /**
-
  * @swagger
-
  * /notificacoes:
-
  *   get:
-
  *     summary: Listar notificações
-
  *     tags: [Notificações]
-
  *     parameters:
-
  *       - in: query
-
  *         name: tipo
-
  *         schema:
-
  *           type: string
-
  *           enum: [confirmacao, lembrete]
-
  *       - in: query
-
  *         name: enviada
-
  *         schema:
-
  *           type: string
-
  *           enum: [true, false]
-
  *     responses:
-
  *       200:
-
  *         description: Lista de notificações
-
  */
 
 /**
-
  * @swagger
-
  * /notificacoes/estatisticas:
-
  *   get:
-
  *     summary: Estatísticas de envio
-
  *     tags: [Notificações]
-
  *     responses:
-
  *       200:
-
  *         description: Contagens de notificações
-
  */
 
 /**
-
  * @swagger
-
  * /notificacoes/{id}/reenviar:
-
  *   post:
-
  *     summary: Reenviar uma notificação
-
  *     tags: [Notificações]
-
  *     parameters:
-
  *       - in: path
-
  *         name: id
-
  *         required: true
-
  *         schema:
-
  *           type: integer
-
  *     responses:
-
  *       200:
-
  *         description: Notificação reenviada
-
  *       404:
-
  *         description: Notificação não encontrada
-
  */
 
-// 💡 Se o grupo tiver tempo, documentem também as rotas de exportação e upload.
+/**
+ * @swagger
+ * /notificacoes/teste-email:
+ *   post:
+ *     summary: Envia um e-mail de teste
+ *     tags: [Notificações]
+ *     responses:
+ *       200:
+ *         description: E-mail de teste enviado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 mensagem:
+ *                   type: string
+ *                 visualizarEm:
+ *                   type: string
+ *       500:
+ *         description: Erro ao tentar enviar o e-mail
+ */
+
+/**
+ * @swagger
+ * /notificacoes/{id}:
+ *   get:
+ *     summary: Buscar uma notificação pelo ID
+ *     tags: [Notificações]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID único da notificação
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Detalhes da notificação encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Notificacao'
+ *       404:
+ *         description: Notificação não encontrada
+ */
+
+
+
 
 module.exports = router;
