@@ -10,8 +10,8 @@ const { sequelize } = require("./models");
 
 
 // 3. Os Observers entram por último, depois que os Models já foram carregados pelo app
-require("./events/notificacaoObserver");
-require("./events/logObserver"); 
+//require("./events/notificacaoObserver");
+//require("./events/logObserver"); 
 
 const PORT = process.env.PORT || 3001;
 
