@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "sua_senha_aqui",
+    "password": "desenvolvimento",
     "database": "notificacoes_db",
     "host": "localhost",
     "port": 3306,
@@ -9,7 +9,7 @@
   },
   "production": {
     "username": "root",
-    "password": null,
+    "password": "desenvolvimento",
     "database": "notificacoes_db",
     "host": "localhost",
     "port": 3306,

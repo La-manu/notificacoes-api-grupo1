@@ -36,20 +36,8 @@ module.exports = {
     // Inserir participantes
     await queryInterface.bulkInsert("participantes", [
       {
-        nome: "Ana Silva",
-        email: "ana@email.com",
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-      {
-        nome: "Carlos Souza",
-        email: "carlos@email.com",
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-      {
-        nome: "Maria Santos",
-        email: "maria@email.com",
+        nome: "Isaaaaaaaaaabele Gf",
+        email: "isabele2@email.com",
         created_at: new Date(),
         updated_at: new Date(),
       },
@@ -59,22 +47,6 @@ module.exports = {
     await queryInterface.bulkInsert("inscricoes", [
       {
         evento_id: 1,
-        participante_id: 1,
-        data_inscricao: new Date(),
-        status: "confirmada",
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-      {
-        evento_id: 1,
-        participante_id: 2,
-        data_inscricao: new Date(),
-        status: "confirmada",
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-      {
-        evento_id: 2,
         participante_id: 3,
         data_inscricao: new Date(),
         status: "confirmada",

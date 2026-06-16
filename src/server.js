@@ -15,6 +15,7 @@ require("./events/logObserver");
 
 const PORT = process.env.PORT || 3001;
 
+
 async function iniciar() {
 
   try {

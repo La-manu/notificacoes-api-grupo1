@@ -84,60 +84,114 @@ Cliente (Postman/Browser)
 | MySQL      | Banco relacional, sinergia com UC de BD                |
 | Sequelize  | ORM que abstrai SQL, facilita migrations               |
 
+### 5.1 Tecnologias Utilizadas e suas Finalidades
+| Tecnologia           | Finalidade                     |
+| -------------------- | ------------------------------ |
+| Node.js              | Runtime                        |
+| Express.js           | Framework web                  |
+| MariaDB              | Banco de dados                 |
+| Sequelize            | ORM                            |
+| Nodemailer + MailPit | Envio de e-mails (teste local) |
+| Swagger              | Documentação                   |
+| Multer               | Upload de arquivos             |
+
 ## 6. Estrutura de Pastas
 notificacoes-api-grupo1/
+│
 ├── docs/
+├── logs/
 ├── src/
+│   │
 │   ├── config/
-│       ├── cache.js 
-        ├── database.js
-        ├── database.json.example
-        ├── upload.js
+│   │   ├── cache.js
+│   │   ├── database.js
+│   │   └── database.json.example
+│   │
 │   ├── controllers/
 │   │   ├── EventoController.js
 │   │   ├── InscricaoController.js
 │   │   └── ParticipanteController.js
-    ├── database
-        ├── migrations
-        ├── seeders 
-│   ├── errors/
-│   │   └── AppError.js
+│   │
+│   ├── database/
+│   │   ├── migrations/
+│   │   │   ├── 20260428125024-criar-tabela-eventos.js
+│   │   │   ├── 20260428125035-criar-tabela-participantes.js
+│   │   │   ├── 20260428125052-criar-tabela-inscricoes.js
+│   │   │   ├── 20260428125711-criar-tabela-notificacoes.js
+│   │   │   └── 20260503113837-adicionar-banner-eventos.js
+│   │   │
+│   │   └── seeders/
+│   │       └── 20260428131301-dados-iniciais.js
+│   │
+│   ├── AppErrors/
+│   │
+│   ├── events/
+│   │   ├── eventEmitter.js
+│   │   ├── LogObserver.js
+│   │   └── notificacaoObserver.js
+│   │
 │   ├── helpers/
-│   │   └── validators.js
+│   │
+│   ├── validators/
+│   │
 │   ├── middlewares/
+│   │   ├── cacheMiddleware.js
 │   │   ├── errorHandler.js
 │   │   ├── logger.js
 │   │   ├── notFound.js
 │   │   └── responseTime.js
-        ├── cacheMiddleware
+│   │
 │   ├── models/
 │   │   ├── EventoModel.js
 │   │   ├── index.js
 │   │   ├── InscricaoModel.js
 │   │   ├── NotificacaoModel.js
-│   │   └── ParticipanteModel.js
-│   ├── models-antigos/
-│   │   ├── EventoModel.js
-│   │   ├── InscricaoModel.js
-│   │   └── ParticipanteModel.js
+│   │   ├── ParticipanteModel.js
+│   │   └── models-antigos/
+│   │
 │   ├── routes/
 │   │   ├── eventoRoutes.js
+│   │   ├── exportRoutes.js
 │   │   ├── inscricaoRoutes.js
+│   │   ├── notificacaoRoutes.js
 │   │   └── participanteRoutes.js
-        ├── exportRoutes.js
+│   │
 │   ├── services/
+│   │   ├── EmailService.js
 │   │   ├── EventoService.js
 │   │   ├── InscricaoService.js
+│   │   ├── NotificacaoService.js
 │   │   └── ParticipanteService.js
+│   │
+│   ├── templates/
+│   │   └── email/
+│   │       ├── baseTemplate.js
+│   │       ├── cancelamentoInscricao.js
+│   │       ├── confirmacaoInscricao.js
+│   │       └── lembreteEvento.js
+│   │
 │   ├── app.js
 │   ├── server.js
 │   └── swagger.js
+│
+├── uploads/
 ├── .env.example
 ├── .gitignore
+├── .sequelizerc
 ├── package-lock.json
 ├── package.json
 └── README.md
 
+
+## 🔧 Scripts Disponíveis
+
+| Comando              | Descrição             |
+| -------------------- | --------------------- |
+| `npm start`          | Inicia em produção    |
+| `npm run dev`        | Inicia com Nodemon    |
+| `npm run db:migrate` | Executa migrations    |
+| `npm run db:seed`    | Insere dados iniciais |
+| `npm run db:reset`   | Recria banco completo |
 
 ## 7. Variáveis de Ambiente
 
@@ -149,7 +203,3 @@ notificacoes-api-grupo1/
 | ...      | ...               | ...             |
 
 > **Capacidade técnica exercitada:** 9 (documentação técnica do sistema)
-
-### Tempo restante: trabalho técnico
-
-Use o tempo restante da aula para avançar no projeto PBE (persistência, banco de dados).
