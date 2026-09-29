@@ -47,7 +47,7 @@ module.exports = {
     await queryInterface.bulkInsert("inscricoes", [
       {
         evento_id: 1,
-        participante_id: 3,
+        participante_id: 1,
         data_inscricao: new Date(),
         status: "confirmada",
         created_at: new Date(),

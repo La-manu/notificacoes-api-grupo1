@@ -153,8 +153,8 @@ router.get("/:id", cacheMiddleware(60), EventoController.show);
  *   post:
  *     summary: Criar um novo evento
  *     tags: [Eventos]
- * security:
- * - bearerAuth: []
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -315,11 +315,11 @@ router.put("/:id", authMiddleware, EventoController.update);
 router.delete("/:id", authMiddleware, EventoController.destroy);
 
 router.get("/perfil", authMiddleware, async (req, res) => {
-    const usuario = await Usuario.findByPk(req.usuarioId, {
-        attributes: { exclude: ["senha"] }
-    });
+  const usuario = await Usuario.findByPk(req.usuarioId, {
+    attributes: { exclude: ["senha"] },
+  });
 
-    res.json(usuario);
+  res.json(usuario);
 }); //desafio
 
 module.exports = router;
