@@ -19,6 +19,13 @@ class ValidationError extends AppError {
     this.name = "ValidationError";
   }
 }
+class UnauthorizedError extends AppError {
+constructor(mensagem = "Não autorizado") {
+super(mensagem, 401);
+this.name = "UnauthorizedError";
+}
+}
+
 
 function isRequired(valor, campo) {
   if (!valor) return `${campo} é obrigatório`;
@@ -29,6 +36,13 @@ function validar(erros) {
   const lista = erros.filter(Boolean);
   return lista.length > 0 ? lista : null;
 }
+
+module.exports = {
+AppError,
+NotFoundError,
+ValidationError,
+UnauthorizedError,
+};
 
 module.exports = { validar, isRequired };
 

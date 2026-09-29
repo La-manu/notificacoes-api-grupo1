@@ -44,7 +44,11 @@ const Notificacao = sequelize.define(
     inscricaoId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      field: "inscricao_id", 
+      field: "inscricao_id",
+      references: {
+        model: "inscricoes", // Aponta para a tabela do InscricaoModel
+        key: "id",
+      },
     },
   },
   {

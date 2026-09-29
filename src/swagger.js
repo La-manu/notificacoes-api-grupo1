@@ -9,12 +9,22 @@ const options = {
       description:
         "API para módulo de notificações por e-mail de uma plataforma de gerenciamento de evento",
     },
+
     servers: [
       {
         url: "http://localhost:3001",
         description: "Servidor de desenvolvimento",
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
   },
   // Onde o Swagger vai procurar os comentários de documentação
   apis: ["./src/routes/*.js"],

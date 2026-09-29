@@ -7,12 +7,14 @@ const cors = require("cors");
 const responseTime = require("./middlewares/responseTime");
 const path = require('path');
 
+
 // Importação das Rotas
 const notificacaoRoutes = require('./routes/notificacaoRoutes');
 const eventoRoutes = require("./routes/eventoRoutes");
 const participanteRoutes = require("./routes/participanteRoutes");
 const inscricaoRoutes = require("./routes/inscricaoRoutes");
 const exportRoutes = require('./routes/exportRoutes');
+const authRoutes = require("./routes/authRoutes");
 
 // ============================================
 // MIDDLEWARES GLOBAIS
@@ -21,7 +23,7 @@ app.use(express.json());
 app.use(logger);
 app.use(cors());
 app.use(responseTime);
-
+app.use("/auth", authRoutes);
 // ============================================
 // DOCUMENTAÇÃO
 // ============================================

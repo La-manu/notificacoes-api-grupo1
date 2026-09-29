@@ -4,9 +4,11 @@ const router = express.Router();
 const EventoController = require("../controllers/EventoController");
 const upload = require("../config/upload");
 const cacheMiddleware = require("../middlewares/cacheMiddleware");
-
+const authMiddleware = require("../middlewares/authMiddleware");
 router.get("/futuros", EventoController.listarFuturos);
-
+router.get("/", cacheMiddleware(30), EventoController.index);
+router.get("/futuros", cacheMiddleware(30), EventoController.listarFuturos);
+router.get("/:id", cacheMiddleware(30), EventoController.show);
 /**
  * @swagger
  * components:
@@ -151,6 +153,8 @@ router.get("/:id", cacheMiddleware(60), EventoController.show);
  *   post:
  *     summary: Criar um novo evento
  *     tags: [Eventos]
+ * security:
+ * - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -273,24 +277,24 @@ router.delete("/:id", EventoController.destroy);
  *         description: Evento não encontrado
  */
 
-router.post('/:id/banner', upload.single('banner'), async (req, res, next) => {
+router.post("/:id/banner", upload.single("banner"), async (req, res, next) => {
   try {
-    const { Evento } = require('../models');
+    const { Evento } = require("../models");
     const evento = await Evento.findByPk(req.params.id);
 
     if (!evento) {
-      return res.status(404).json({ erro: 'Evento não encontrado' });
+      return res.status(404).json({ erro: "Evento não encontrado" });
     }
 
     if (!req.file) {
-      return res.status(400).json({ erro: 'Nenhum arquivo enviado' });
+      return res.status(400).json({ erro: "Nenhum arquivo enviado" });
     }
 
     // Salvar o caminho do arquivo no banco
     await evento.update({ banner: `/uploads/${req.file.filename}` });
 
     res.json({
-      mensagem: 'Banner atualizado com sucesso',
+      mensagem: "Banner atualizado com sucesso",
       banner: `/uploads/${req.file.filename}`,
     });
   } catch (erro) {
@@ -298,5 +302,24 @@ router.post('/:id/banner', upload.single('banner'), async (req, res, next) => {
   }
 });
 
+router.post("/", authMiddleware, EventoController.store);
+router.post(
+  "/:id/banner",
+  authMiddleware,
+  upload.single("banner"),
+  async (req, res, next) => {
+    // ... corpo existente, sem alteração
+  },
+);
+router.put("/:id", authMiddleware, EventoController.update);
+router.delete("/:id", authMiddleware, EventoController.destroy);
+
+router.get("/perfil", authMiddleware, async (req, res) => {
+    const usuario = await Usuario.findByPk(req.usuarioId, {
+        attributes: { exclude: ["senha"] }
+    });
+
+    res.json(usuario);
+}); //desafio
 
 module.exports = router;

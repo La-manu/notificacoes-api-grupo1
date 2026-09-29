@@ -24,6 +24,7 @@ async function iniciar() {
 
     console.log('Conexão com MySQL estabelecida com sucesso!');
 
+
     // Inicializar o serviço de e-mail
 
     await EmailService.inicializar();

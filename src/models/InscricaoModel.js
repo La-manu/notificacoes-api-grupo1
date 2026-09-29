@@ -1,6 +1,7 @@
 // src/models/InscricaoModel.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
+
 const Inscricao = sequelize.define(
   "Inscricao",
   {
@@ -43,5 +44,6 @@ const Inscricao = sequelize.define(
     timestamps: true,
     underscored: true,
   },
+  
 );
 module.exports = Inscricao;
